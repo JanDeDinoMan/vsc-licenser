@@ -50,7 +50,7 @@ import { Zlib } from "./licenses/zlib";
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
-
+import ignore = require("ignore");
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -111,8 +111,15 @@ class Licenser {
     private licenseTemplate: string;
     private author: string;
     private _disposable: vscode.Disposable;
+    private root: string;
 
     constructor() {
+        if (typeof(vscode.workspace.workspaceFolders) === 'undefined') {
+            vscode.window.showErrorMessage("No directory is opened.");
+            return;
+        }
+        this.root = vscode.workspace.workspaceFolders[0].uri.fsPath;
+
         let licenserSetting = vscode.workspace.getConfiguration("licenser");
         let licenseType = licenserSetting.get<string>("license", undefined);
         if (licenseType === undefined) {
@@ -130,25 +137,20 @@ class Licenser {
         vscode.commands.registerCommand("extension.insertMultipleLicenseHeaders", (context) => { this.insertMultiple(context) });
         vscode.commands.registerCommand("extension.InsertLicensesOnEntireWorkspace", () => { this.insertMultiple(null) });
 
-        vscode.window.onDidChangeActiveTextEditor(this._onDidChangeActiveTextEditor, this, subscriptions)
+        vscode.window.onDidChangeActiveTextEditor(this._onDidChangeActiveTextEditor, this, subscriptions);
     }
 
     /**
      * create generates LICENSE file and save it in opened workspace.
      */
     create() {
-        const root = vscode.workspace.rootPath;
         const licesnerSetting = vscode.workspace.getConfiguration("licenser");
         const autosave = !licesnerSetting.get<boolean>("disableAutoSave", false);
-        if (root === undefined) {
-            vscode.window.showErrorMessage("No directory is opened.");
-            return;
-        }
 
         this._chooseLicenseType().then(licenseType => {
             if (licenseType !== null && licenseType !== undefined) {
                 const license = this.getLicense(licenseType);
-                this._doCreateLicense(root, license, autosave);
+                this._doCreateLicense(this.root, license, autosave);
             }
         });
     }
@@ -324,6 +326,19 @@ class Licenser {
                 return;
             }
             const fileName = path.win32.basename(e.document.fileName);
+            let useGitIgnore = licenserSetting.get<boolean>("useGitIgnore");
+            let ignorePath = path.join(this.root, ".gitignore");
+
+            if (useGitIgnore && fs.existsSync(ignorePath)){
+                let ig = ignore.default();
+                ig.add(fs.readFileSync(ignorePath).toString());
+
+                if (ig.ignores(path.relative('/', e.document.fileName))){
+                    console.log("File: " + e.document.fileName +" in gitignore!");
+                    return;
+                }
+            }
+
             if (fileName !== defaultLicenseFilename) {
                 const doc = e.document;
                 const contents = doc.getText();

@@ -267,6 +267,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Disable auto save after an operation (defaults to false)."
+                },
+                "licenser.useGitIgnore": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Exclude files from having headers auto inserted based on the .gitignore file (defaults to false)."
                 }
             }
         },
@@ -337,6 +342,7 @@
         "typescript": "^3.9.9"
     },
     "dependencies": {
+        "ignore": "^5.2.0",
         "vsce": "^1.25.1"
     }
 }

@@ -102,7 +102,7 @@ The following programing languages/frameworks are supported in the manual config
 
 ### licenser.license
 
-```
+```json
 "licenser.license": "AL2"
 ```
 
@@ -141,7 +141,7 @@ Currently, supported licenses are:
 
 ### licenser.author
 
-```
+```json
 "licenser.author": "Yoshi Yamaguchi"
 ```
 
@@ -150,7 +150,7 @@ license header template.
 
 ### licenser.projectName
 
-```
+```json
 "licenser.projectName": "Awesome project"
 ```
 
@@ -161,7 +161,7 @@ not in User setting, since User setting affects all workspaces which are not rel
 
 ### licenser.useSingleLineStyle
 
-```
+```json
 "licenser.useSingleLineStyle": true
 ```
 
@@ -172,7 +172,7 @@ multi line comment will be applied.
 
 ### licenser.customTermsAndConditions
 
-```
+```json
 "licenser.customTermsAndConditions": "Copyright @YEAR@ @AUTHOR@\n\nThese are my terms and conditions..."
 ```
 
@@ -191,7 +191,7 @@ Consider using a regex replace to convert an existing multi-line file to a singl
 
 ### licenser.customTermsAndConditionsFile
 
-```
+```json
 "licenser.customTermsAndConditionsFile": "path/to/terms.txt"
 ```
 
@@ -202,7 +202,7 @@ Placeholders are the same as `licenser.customTermsAndConditions`.
 
 ### licenser.customHeader
 
-```
+```json
 "licenser.customHeader": "@FILENAME@ - @PROJECT@\n\nCopyright @YEAR@ @AUTHOR@\n\nThis is my license..."
 ```
 
@@ -212,7 +212,7 @@ Placeholders and escaping requirements are the same as `licenser.customTermsAndC
 
 ### licenser.customHeaderFile
 
-```
+```json
 "licenser.customHeaderFile": "path/to/header.txt"
 ```
 
@@ -223,13 +223,20 @@ Placeholders are the same as `licenser.customTermsAndConditions`.
 
 ### licenser.disableAutoHeaderInsertion
 
-```
+```json
 "licenser.disableAutoHeaderInsertion": false
 ```
 
 This setting defines the behavior of header auto-insertion.
 If this setting is set as `true`, licenser will disable auto-insertion of license header on creation of new file.
 
+### licenser.useGitIgnore
+
+```json
+"licenser.useGitIgnore": false
+```
+
+If this setting is `true`, licenser will not auto-instert the  header accourding into files according to the rules difinded in the .gitignore in the root of the project.
 ## Call to action
 
 ### Report issues
